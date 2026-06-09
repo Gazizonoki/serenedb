@@ -106,6 +106,41 @@ project(
     VERSION ${SERENEDB_VERSION_MAJOR}.${SERENEDB_VERSION_MINOR}
 )
 
+# CMake 3.28+ may run clang-scan-deps for CXX module dependency (.ddi) scans. That
+# driver often omits the same implicit macOS SDK flags as a normal compile; with
+# -nostdinc++ and vendored libc++ the scan then fails on system headers (e.g. time.h).
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.28")
+    set(CMAKE_CXX_SCAN_FOR_MODULES
+        OFF
+        CACHE BOOL "SereneDB: disable C++ module dependency scanning (clang-scan-deps)"
+        FORCE
+    )
+endif()
+
+# libc++ pulls <time.h> from the platform SDK. Set sysroot early so try_compile,
+# clang-scan-deps (if enabled), and all targets share the same SDK root.
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    if(NOT CMAKE_OSX_SYSROOT)
+        execute_process(
+            COMMAND xcrun --sdk macosx --show-sdk-path
+            OUTPUT_VARIABLE _sdb_osx_sysroot
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            RESULT_VARIABLE _sdb_xcrun_rc
+        )
+        if(_sdb_xcrun_rc EQUAL 0 AND EXISTS "${_sdb_osx_sysroot}")
+            set(CMAKE_OSX_SYSROOT
+                "${_sdb_osx_sysroot}"
+                CACHE PATH "macOS SDK path"
+            )
+        endif()
+    endif()
+    if(CMAKE_OSX_SYSROOT)
+        set(CMAKE_SYSROOT "${CMAKE_OSX_SYSROOT}" CACHE PATH "macOS SDK (toolchain root)" FORCE)
+        add_compile_options("-isysroot${CMAKE_OSX_SYSROOT}")
+        add_link_options("-isysroot${CMAKE_OSX_SYSROOT}")
+    endif()
+endif()
+
 # Options
 
 enable_testing()
@@ -866,6 +901,10 @@ add_custom_target(exitcodefiles ALL DEPENDS ${EXIT_CODE_FILES_GEN})
 ################################################################################
 
 list(INSERT SYSTEM_LIBRARIES 0 ${OPENSSL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+if(APPLE)
+    # SRV helpers in endpoint_srv.cpp (res_9_*); not part of libc on Darwin.
+    list(APPEND SYSTEM_LIBRARIES resolv)
+endif()
 
 add_subdirectory(libs)
 add_subdirectory(server)

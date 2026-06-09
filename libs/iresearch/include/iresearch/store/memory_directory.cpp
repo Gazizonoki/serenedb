@@ -152,7 +152,7 @@ uint32_t MemoryIndexInput::Checksum(uint64_t offset) const {
 
   for (; offset && buffer_idx < last_buffer_idx; ++buffer_idx) {
     auto& buf = _file->get_buffer(buffer_idx);
-    to_process = std::min(offset, buf.size);
+    to_process = std::min(offset, static_cast<uint64_t>(buf.size));
     crc.process_bytes(buf.data, to_process);
     offset -= to_process;
   }
@@ -160,7 +160,9 @@ uint32_t MemoryIndexInput::Checksum(uint64_t offset) const {
   // process the last buffer
   if (offset && buffer_idx == last_buffer_idx) {
     auto& buf = _file->get_buffer(last_buffer_idx);
-    to_process = std::min(offset, _file->Length() - buf.offset);
+    to_process = std::min(
+      offset,
+      static_cast<uint64_t>(_file->Length() - buf.offset));
     crc.process_bytes(buf.data, to_process);
   }
 

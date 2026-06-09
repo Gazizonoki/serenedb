@@ -36,7 +36,7 @@
 #include <WinSock2.h>
 #endif
 
-#if defined(__linux__)
+#ifndef _WIN32
 #include <fcntl.h>
 #endif
 #include <openssl/opensslv.h>
@@ -591,7 +591,15 @@ bool SslClientConnection::readable() {
 }
 
 bool SslClientConnection::setSocketToNonBlocking() {
-#if defined(__linux__)
+#ifdef _WIN32
+  u_long nonBlocking = 1;
+  if (ioctlsocket(static_cast<SOCKET>(_socket.file_descriptor), FIONBIO,
+                  &nonBlocking) != 0) {
+    _error_details = "Attempt to create non-blocking socket generated error " +
+                     std::to_string(WSAGetLastError());
+    return false;
+  }
+#else
   _socket_flags = fcntl(_socket.file_descriptor, F_GETFL, 0);
   if (_socket_flags == -1) {
     _error_details = "Socket file descriptor read returned with error " +
@@ -604,31 +612,25 @@ bool SslClientConnection::setSocketToNonBlocking() {
                      std::to_string(errno);
     return false;
   }
-#else
-  u_long nonBlocking = 1;
-  if (ioctlsocket(_socket.fileDescriptor, FIONBIO, &nonBlocking) != 0) {
-    _error_details = "Attempt to create non-blocking socket generated error " +
-                     std::to_string(WSAGetLastError());
-    return false;
-  }
 #endif
   return true;
 }
 
 bool SslClientConnection::cleanUpSocketFlags() {
   SDB_ASSERT(_is_socket_non_blocking);
-#if defined(__linux__)
+#ifdef _WIN32
+  u_long nonBlocking = 0;
+  if (ioctlsocket(static_cast<SOCKET>(_socket.file_descriptor), FIONBIO,
+                  &nonBlocking) != 0) {
+    _error_details = "Attempt to make socket blocking generated error " +
+                     std::to_string(WSAGetLastError());
+    return false;
+  }
+#else
   if (fcntl(_socket.file_descriptor, F_SETFL, _socket_flags & ~O_NONBLOCK) ==
       -1) {
     _error_details = "Attempt to make socket blocking generated error " +
                      std::to_string(errno);
-    return false;
-  }
-#else
-  u_long nonBlocking = 0;
-  if (ioctlsocket(_socket.fileDescriptor, FIONBIO, &nonBlocking) != 0) {
-    _error_details = "Attempt to make socket blocking generated error " +
-                     std::to_string(WSAGetLastError());
     return false;
   }
 #endif

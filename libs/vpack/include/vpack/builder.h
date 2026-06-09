@@ -24,6 +24,7 @@
 #include <absl/container/inlined_vector.h>
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <memory>
@@ -334,6 +335,15 @@ class Builder {
   // Add a subvalue into an array from a uint64_t:
   uint8_t* add(uint64_t v) { return addInternal(v); }
   uint8_t* add(uint32_t v) { return addInternal<uint64_t>(v); }
+
+  // LP64 Darwin: size_t is unsigned long, uint64_t is unsigned long long — not
+  // the same type, so b.add(size_t) is otherwise ambiguous with add(bool),
+  // add(double), etc. (No second add(size_t) when size_t aliases uint64_t.)
+#if defined(__APPLE__) && defined(__LP64__)
+  uint8_t* add(size_t v) {
+    return addInternal<uint64_t>(static_cast<uint64_t>(v));
+  }
+#endif
 
   // Add a subvalue into an array from a Value:
   uint8_t* add(Value v) { return addInternal(v); }

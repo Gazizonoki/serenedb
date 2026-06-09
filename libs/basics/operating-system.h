@@ -22,10 +22,10 @@
 #pragma once
 
 #ifndef __STDC_LIMIT_MACROS
-#define STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS 1
 #endif
 
-#ifdef __linux__
+#if defined(__linux__)
 
 // necessary defines and includes
 
@@ -33,18 +33,37 @@
 
 // force posix source
 #if !defined(_POSIX_C_SOURCE)
-#define POSIX_C_SOURCE 200809L
+#define _POSIX_C_SOURCE 200809L
 #endif
 
 // first include the features file and then define
 #include <features.h>
 
-// for INTxx_MIN and INTxx_MAX
-#ifndef __STDC_LIMIT_MACROS
-#define __STDC_LIMIT_MACROS 1
+// for INTxx_MIN and INTxx_MAX (see __STDC_LIMIT_MACROS at top of file)
+
+// Linux getrusage(2): ru_maxrss in kilobytes; multiply by this for bytes
+#define SERENEDB_GETRUSAGE_MAXRSS_UNIT 1024
+
+#define SERENEDB_POSIX_COMMON 1
+
+#elif defined(__APPLE__)
+
+// macOS / Darwin (BSD libc, not glibc — no <features.h>, struct stat uses
+// *timespec)
+
+#define SERENEDB_PLATFORM "darwin"
+
+// Darwin (macOS 10.11+): ru_maxrss in bytes, not kilobytes.
+#define SERENEDB_GETRUSAGE_MAXRSS_UNIT 1
+#define SERENEDB_HAVE_MACH
+
+#define SERENEDB_POSIX_COMMON 1
+
 #endif
 
-#define SERENEDB_GETRUSAGE_MAXRSS_UNIT 1024
+#ifdef SERENEDB_POSIX_COMMON
+
+// Shared definitions for Linux and Darwin (see platform branches above).
 
 // enabled features
 
@@ -59,7 +78,6 @@
 #define SERENEDB_HAVE_POLL_H 1
 #define SERENEDB_HAVE_SIGNAL_H 1
 #define SERENEDB_HAVE_SYS_IOCTL_H 1
-#define SERENEDB_HAVE_SYS_PRCTL_H 1
 #define SERENEDB_HAVE_SYS_RESOURCE_H 1
 #define SERENEDB_HAVE_SYS_SOCKET_H 1
 #define SERENEDB_HAVE_SYS_TIME_H 1
@@ -84,12 +102,9 @@
 #define SERENEDB_HAVE_SETGID 1
 #define SERENEDB_HAVE_SETUID 1
 
-#define SERENEDB_HAVE_PRCTL 1
-
 // available features
 
 #define SERENEDB_HAVE_DOMAIN_SOCKETS 1
-#define SERENEDB_HAVE_LINUX_PROC 1
 #define SERENEDB_HAVE_POSIX_THREADS 1
 #define SERENEDB_HAVE_SC_PHYS_PAGES 1
 
@@ -115,8 +130,6 @@
 #define SERENEDB_DUP ::dup
 #define SERENEDB_RMDIR ::rmdir
 #define SERENEDB_STAT ::stat
-#define SERENEDB_STAT_ATIME_SEC(statbuf) (statbuf).st_atim.tv_sec
-#define SERENEDB_STAT_MTIME_SEC(statbuf) (statbuf).st_mtim.tv_sec
 #define SERENEDB_UNLINK ::unlink
 #define SERENEDB_WRITE ::write
 #define SERENEDB_FDOPEN(a, b) ::fdopen((a), (b))
@@ -128,10 +141,34 @@
 
 #define SERENEDB_INVALID_SOCKET (-1)
 
+#if defined(__linux__)
+
+// Linux-only: headers, syscalls, /proc
+
+#define SERENEDB_HAVE_SYS_PRCTL_H 1
+#define SERENEDB_HAVE_PRCTL 1
+#define SERENEDB_HAVE_LINUX_PROC 1
+
+// struct stat timestamps (glibc: st_atim / st_mtim)
+
+#define SERENEDB_STAT_ATIME_SEC(statbuf) (statbuf).st_atim.tv_sec
+#define SERENEDB_STAT_MTIME_SEC(statbuf) (statbuf).st_mtim.tv_sec
+
+#elif defined(__APPLE__)
+
+// struct stat timestamps (BSD: st_atimespec / st_mtimespec)
+
+#define SERENEDB_STAT_ATIME_SEC(statbuf) (statbuf).st_atimespec.tv_sec
+#define SERENEDB_STAT_MTIME_SEC(statbuf) (statbuf).st_mtimespec.tv_sec
+
+#endif
+
 // user and group types
 
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#undef SERENEDB_POSIX_COMMON
 
 #endif

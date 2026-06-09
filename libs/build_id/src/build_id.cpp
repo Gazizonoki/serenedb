@@ -21,10 +21,11 @@
 
 #include "build_id/build_id.h"
 
-#include <elf.h>
-#include <link.h>
+#include <string_view>
 
-#include <string>
+#if defined(SERENEDB_HAVE_ELF_BUILD_ID)
+
+#include <elf.h>
 
 extern char build_id_start[];  // NOLINT
 extern char build_id_end;      // NOLINT
@@ -46,3 +47,13 @@ std::string_view GetBuildId() {
 }
 
 }  // namespace sdb::build_id
+
+#else
+
+namespace sdb::build_id {
+
+std::string_view GetBuildId() { return {}; }
+
+}  // namespace sdb::build_id
+
+#endif

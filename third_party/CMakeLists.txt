@@ -203,6 +203,11 @@ add_library(Boost::headers ALIAS boost_boost)
 if(NOT TARGET ICU::uc)
     sdb_update_module(${GIT_EXECUTABLE} "icu" ${CMAKE_CURRENT_SOURCE_DIR} "README.md")
     add_subdirectory(icu)
+    # ICU submodule CMakeLists is overwritten by submodule updates; Darwin icudata
+    # asm fix lives in cmake/SereneIcuDarwinData.cmake.
+    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        include("${CMAKE_SOURCE_DIR}/cmake/SereneIcuDarwinData.cmake")
+    endif()
 
     # For re2
     add_library(icu-uc ALIAS _icuuc)
@@ -444,7 +449,9 @@ add_subdirectory(snappy)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(S2_USE_SYSTEM_INCLUDES ON CACHE BOOL "" FORCE)
-sdb_update_module(${GIT_EXECUTABLE} "s2geometry" ${CMAKE_CURRENT_SOURCE_DIR} "README.md")
+# Временно: не вызывать git submodule update для s2geometry (локальные патчи).
+# Раскомментируйте после переноса в форк/фиксированный коммит.
+# sdb_update_module(${GIT_EXECUTABLE} "s2geometry" ${CMAKE_CURRENT_SOURCE_DIR} "README.md")
 add_subdirectory(s2geometry)
 
 ################################################################################
@@ -727,10 +734,28 @@ set(FOLLY_USE_SYMBOLIZER OFF)
 set(FOLLY_HAVE_LIBUNWIND OFF)
 set(FOLLY_HAVE_ELF OFF)
 set(FOLLY_HAVE_DWARF OFF)
-sdb_update_module(${GIT_EXECUTABLE} "folly" ${CMAKE_CURRENT_SOURCE_DIR} "README.md")
+# Временно: не вызывать git submodule update для folly, чтобы локальные патчи
+# не затирались при каждой реконфигурации. Раскомментируйте после переноса правок
+# в форк/фиксированный коммит подмодуля.
+# Чтобы отключить автообновление всех подмодулей: cmake -DAUTO_UPDATE_MODULES=OFF
+# sdb_update_module(${GIT_EXECUTABLE} "folly" ${CMAKE_CURRENT_SOURCE_DIR} "README.md")
 add_subdirectory(folly)
 target_include_directories(folly PUBLIC ${OPENSSL_INCLUDE_DIR})
 target_link_libraries(folly PUBLIC ${OPENSSL_LIBRARIES})
+# StackTrace.cpp uses backtrace() on __APPLE__ but only includes <execinfo.h> when
+# FOLLY_HAVE_BACKTRACE; configure can leave it unset while FOLLY_HAVE_LIBUNWIND is OFF.
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    # ld64.lld does not resolve Mach-O weak externals the way ELF ld does; Folly
+    # then leaves jemalloc/tcmalloc symbols undefined. Use the non-weak nullptr
+    # function-pointer path and skip tcmalloc property probes.
+    target_compile_definitions(
+        folly
+        PRIVATE
+            FOLLY_HAVE_BACKTRACE=1
+            FOLLY_HAVE_WEAK_SYMBOLS=0
+            FOLLY_ASSUME_NO_TCMALLOC=1
+    )
+endif()
 # folly-deps.cmake consumes OPENSSL_LIBRARIES as plain file paths (our vendored
 # libssl.a / libcrypto.a via the pre-seeded cache vars above). Build system does not
 # infer a build-order dependency from a raw path, so wire it explicitly.

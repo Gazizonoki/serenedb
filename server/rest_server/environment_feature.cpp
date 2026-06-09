@@ -70,13 +70,13 @@ std::string_view TrimProcName(std::string_view content) {
 }
 #endif
 
+#ifdef __linux__
+
 uint64_t ActualMaxMappings() {
   uint64_t max_mappings = UINT64_MAX;
 
   // in case we cannot determine the number of max_map_count, we will
   // assume an effectively unlimited number of mappings
-#ifdef __linux__
-  // test max_map_count value in /proc/sys/vm
   try {
     std::string value =
       sdb::basics::file_utils::Slurp("/proc/sys/vm/max_map_count");
@@ -85,13 +85,11 @@ uint64_t ActualMaxMappings() {
   } catch (...) {
     // file not found or values not convertible into integers
   }
-#endif
 
   return max_mappings;
 }
 
 uint64_t MinimumExpectedMaxMappings() {
-#ifdef __linux__
   uint64_t expected = 65530;  // Linux kernel default
 
   uint64_t nproc = sdb::number_of_cores::GetValue();
@@ -103,10 +101,9 @@ uint64_t MinimumExpectedMaxMappings() {
   }
 
   return expected;
-#else
-  return 0;
-#endif
 }
+
+#endif
 
 }  // namespace
 
@@ -115,8 +112,9 @@ using namespace sdb::basics;
 namespace sdb {
 
 void PrintEnvironment() {
+  std::string operating_system = "unknown";
 #ifdef __linux__
-  std::string operating_system = "linux";
+  operating_system = "linux";
   try {
     const std::string version_filename("/proc/version");
 
@@ -127,8 +125,6 @@ void PrintEnvironment() {
   } catch (...) {
     // ignore any errors as the log output is just informational
   }
-#else
-  operating_system = "unknown";
 #endif
 
   // find parent process id and name

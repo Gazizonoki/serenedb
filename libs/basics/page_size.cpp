@@ -31,7 +31,7 @@ using namespace sdb;
 
 namespace {
 
-// Windows variant for getpagesize()
+// Cached result of getpagesize() (POSIX; declared in <unistd.h> on Darwin/Linux).
 int PageSizeImpl() { return getpagesize(); }
 
 struct PageSizeCache {

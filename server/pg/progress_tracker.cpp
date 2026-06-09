@@ -20,8 +20,17 @@
 
 #include "pg/progress_tracker.h"
 
-#include <sys/types.h>
-#include <unistd.h>
+#include <functional>
+#include <thread>
+
+namespace {
+
+int64_t CurrentThreadId() noexcept {
+  return static_cast<int64_t>(
+    std::hash<std::thread::id>{}(std::this_thread::get_id()));
+}
+
+}  // namespace
 
 namespace sdb::pg {
 
@@ -29,7 +38,7 @@ ProgressReporterBase::ProgressReporterBase(ObjectId relid,
                                            ProgressCommand command_type,
                                            ObjectId datid)
   : _tracker{ProgressTracker::Instance()},
-    _id{_tracker.StartCommand({.pid = gettid(),
+    _id{_tracker.StartCommand({.pid = CurrentThreadId(),
                                .datid = datid,
                                .relid = relid,
                                .command_type = command_type})},

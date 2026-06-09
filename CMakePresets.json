@@ -9,14 +9,12 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_EXE_LINKER_FLAGS": "-fuse-ld=lld",
-        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=lld",
         "AUTO_UPDATE_MODULES": "On",
-        "USE_DEBUG_INFO": "LLDB",
+        "USE_DEBUG_INFO": "LINES",
         "SDB_SANITIZE": "",
         "SDB_FAULT_INJECTION": "On",
         "SDB_GTEST": "On",
-        "SDB_IOURING": "On"
+        "SDB_IOURING": "Off"
       }
     },
     {

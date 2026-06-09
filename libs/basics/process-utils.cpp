@@ -73,6 +73,10 @@
 #include <unistd.h>
 #endif
 
+#if defined(__APPLE__)
+#include <crt_externs.h>
+#endif
+
 #include <algorithm>
 #include <string_view>
 
@@ -241,7 +245,12 @@ void StartExternalProcessPosixSpawn(
   containers::FlatHashMap<std::string_view, size_t> positions;
 
   std::vector<char*> envs;
-  for (char** e = environ; *e != nullptr; ++e) {
+#if defined(__APPLE__)
+  char** const env_base = *_NSGetEnviron();
+#else
+  char** const env_base = environ;
+#endif
+  for (char** e = env_base; *e != nullptr; ++e) {
     positions.insert_or_assign(extract_name(*e), envs.size());
     envs.push_back(*e);
   }
@@ -423,7 +432,7 @@ ProcessInfo GetProcessInfoSelf() {
 ProcessInfo GetProcessInfoSelf() {
   ProcessInfo result;
 
-  result._sc_clk_tck = 1000000;
+  result.sc_clk_tck = 1000000;
 
   struct rusage used;
   int res = getrusage(RUSAGE_SELF, &used);
@@ -432,8 +441,8 @@ ProcessInfo GetProcessInfoSelf() {
     result.minor_page_faults = used.ru_minflt;
     result.major_page_faults = used.ru_majflt;
 
-    result._system_time = GetMicrosecondsTv(&used.ru_stime);
-    result._user_time = GetMicrosecondsTv(&used.ru_utime);
+    result.system_time = GetMicrosecondsTv(&used.ru_stime);
+    result.user_time = GetMicrosecondsTv(&used.ru_utime);
 
     // ru_maxrss is the resident set size in kilobytes. need to multiply with
     // 1024 to get the number of bytes
@@ -548,9 +557,9 @@ static ProcessInfo GetProcessInfoH(HANDLE processHandle, pid_t pid) {
     // see remarks in
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683223(v=vs.85).aspx
     // value in seconds
-    result._sc_clk_tck = 10000000;  // 1e7
-    result._system_time = _TimeAmount(&kernelTime);
-    result._user_time = _TimeAmount(&userTime);
+    result.sc_clk_tck = 10000000;  // 1e7
+    result.system_time = _TimeAmount(&kernelTime);
+    result.user_time = _TimeAmount(&userTime);
     // for computing  the timestamps of creation and exit time
     // the function '_FileTime_to_POSIX' should be called
   }
@@ -674,7 +683,7 @@ ProcessInfo GetProcessInfo(pid_t pid) {
 ProcessInfo GetProcessInfo(pid_t pid) {
   ProcessInfo result;
 
-  result._sc_clk_tck = 1;
+  result.sc_clk_tck = 1;
 
   return result;
 }

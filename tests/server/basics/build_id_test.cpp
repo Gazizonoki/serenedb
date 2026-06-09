@@ -24,7 +24,11 @@
 
 using namespace sdb::build_id;
 
-TEST(BuildIdTest, successfully_obtains_build_id) {
-  auto build_id = GetBuildId();
-  ASSERT_TRUE(build_id.size() > 0);
+TEST(BuildIdTest, matches_platform_support) {
+  auto id = GetBuildId();
+#if defined(SERENEDB_HAVE_ELF_BUILD_ID)
+  ASSERT_FALSE(id.empty());
+#else
+  EXPECT_TRUE(id.empty());
+#endif
 }

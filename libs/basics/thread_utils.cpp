@@ -125,12 +125,12 @@ namespace irs {
 // OSX as of 10.6 restricts name length to 64 bytes
 constexpr size_t MAX_THREAD_NAME_LENGTH = 64;
 
-bool SetThreadName(const thread_name_t name) noexcept {
+bool SetThreadName(const THREAD_NAME_T name) noexcept {
   return 0 == pthread_setname_np(name);
 }
 
-bool get_thread_name(
-  irs::basic_string<std::remove_pointer_t<thread_name_t>>& name) {
+bool GetThreadName(
+  std::basic_string<std::remove_pointer_t<THREAD_NAME_T>>& name) {
   name.resize(MAX_THREAD_NAME_LENGTH, 0);
   if (0 == pthread_getname_np(pthread_self(), const_cast<char*>(name.data()),
                               name.size())) {

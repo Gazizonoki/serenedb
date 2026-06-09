@@ -70,8 +70,9 @@ GlobalContext::GlobalContext(int /*argc*/, char* argv[],
     _run_root(SdbGetInstallRoot(SdbLocateBinaryPath(argv[0]).c_str(),
                                 install_directory)),
     _ret(EXIT_FAILURE) {
-#ifndef __GLIBC__
-  // Increase default stack size for libmusl:
+#if defined(__linux__) && !defined(__GLIBC__)
+  // Increase default stack size for libmusl (glibc already uses a large default;
+  // macOS and other platforms lack pthread_setattr_default_np).
   pthread_attr_t a;
   pthread_attr_init(&a);
   pthread_attr_setstacksize(&a, 8 * 1024 * 1024);  // 8MB as in glibc

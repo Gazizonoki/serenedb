@@ -14,8 +14,8 @@ file(
 )
 
 # generate external project
-if (LINUX OR DARWIN)
-  if (DARWIN)
+if (UNIX)
+  if (APPLE)
     set(JEMALLOC_CC "cc")
     set(JEMALLOC_CXX "c++")
     set(JEMALLOC_CONFIG "background_thread:false")

@@ -3264,7 +3264,8 @@ TEST(block_disjunction_test, check_attributes) {
       irs::ScoreAdapter, irs::ScoreMergeType::Sum,
       irs::BlockDisjunctionTraits<irs::MatchType::Match, false, 1>>;
 
-    Disjunction it(detail::ExecuteAll<irs::ScoreAdapter>(docs), 1, size_t{});
+    Disjunction it(detail::ExecuteAll<irs::ScoreAdapter>(docs), 1,
+                   irs::CostAttr::Type{});
     ASSERT_FALSE(irs::doc_limits::eof(it.value()));
     auto* cost = irs::get<irs::CostAttr>(it);
     ASSERT_NE(nullptr, cost);
@@ -3287,7 +3288,8 @@ TEST(block_disjunction_test, check_attributes) {
       irs::ScoreAdapter, irs::ScoreMergeType::Sum,
       irs::BlockDisjunctionTraits<irs::MatchType::Match, false, 1>>;
 
-    Disjunction it(detail::ExecuteAll<irs::ScoreAdapter>(docs), 1, size_t{});
+    Disjunction it(detail::ExecuteAll<irs::ScoreAdapter>(docs), 1,
+                   irs::CostAttr::Type{});
     ASSERT_FALSE(irs::doc_limits::eof(it.value()));
     auto* cost = irs::get<irs::CostAttr>(it);
     ASSERT_NE(nullptr, cost);
@@ -3856,7 +3858,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{1});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -3917,7 +3919,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{1});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -3978,7 +3980,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4039,7 +4041,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4097,7 +4099,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4170,7 +4172,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4243,7 +4245,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4304,7 +4306,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4360,7 +4362,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4414,7 +4416,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4497,7 +4499,7 @@ TEST(block_disjunction_test, next_scored) {
       irs::ScoreAdapter, irs::ScoreMergeType::Sum,
       irs::BlockDisjunctionTraits<irs::MatchType::Match, false, 1>>;
 
-    Disjunction it(Disjunction::Adapters{}, 1, size_t{});
+    Disjunction it(Disjunction::Adapters{}, 1, irs::CostAttr::Type{});
 
     detail::CompoundSort sort{{4, 5}};
 
@@ -4539,7 +4541,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4599,7 +4601,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4655,7 +4657,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4710,7 +4712,7 @@ TEST(block_disjunction_test, next_scored) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4764,7 +4766,7 @@ TEST(block_disjunction_test, next_scored) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{3});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -4872,7 +4874,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{1});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4931,7 +4933,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -4990,7 +4992,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5049,7 +5051,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5123,7 +5125,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5197,7 +5199,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5259,7 +5261,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5314,7 +5316,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5367,7 +5369,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{2});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5505,7 +5507,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5565,7 +5567,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5621,7 +5623,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5676,7 +5678,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
           auto res = detail::ExecuteAll<Adapter>(docs);
 
           return irs::memory::make_managed<Disjunction>(
-            std::move(res), size_t{1}, size_t{3});  // custom cost
+            std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
         });
 
       using ExpectedType = irs::BlockDisjunction<
@@ -5730,7 +5732,7 @@ TEST(block_disjunction_test, next_scored_two_blocks) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{3});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{3});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7448,7 +7450,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7509,7 +7511,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7582,7 +7584,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7644,7 +7646,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
 
         auto res = detail::ExecuteAll<Adapter>(docs);
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7699,7 +7701,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7759,7 +7761,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7817,7 +7819,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7880,7 +7882,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -7946,7 +7948,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8003,7 +8005,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8064,7 +8066,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8122,7 +8124,7 @@ TEST(block_disjunction_test, seek_scored_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8196,7 +8198,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8257,7 +8259,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8330,7 +8332,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8393,7 +8395,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8447,7 +8449,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8506,7 +8508,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8562,7 +8564,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8625,7 +8627,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8691,7 +8693,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8748,7 +8750,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8809,7 +8811,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -8867,7 +8869,7 @@ TEST(block_disjunction_test, seek_scored_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{2});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{2});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10360,7 +10362,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10414,7 +10416,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10489,7 +10491,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10564,7 +10566,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10639,7 +10641,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10712,7 +10714,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<
@@ -10767,7 +10769,7 @@ TEST(block_disjunction_test, scored_seek_next_no_readahead) {
         auto res = detail::ExecuteAll<Adapter>(docs);
 
         return irs::memory::make_managed<Disjunction>(
-          std::move(res), size_t{1}, size_t{1});  // custom cost
+          std::move(res), size_t{1}, irs::CostAttr::Type{1});  // custom cost
       });
 
     using ExpectedType = irs::BlockDisjunction<

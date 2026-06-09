@@ -799,7 +799,7 @@ void InitGroups(std::string_view user_name, gid_t group_id) noexcept {
   }
 #else
   // For other unixes (including Mac), we can use the OS call.
-  initgroups(userName.c_str(), groupId);
+  initgroups(user_name.data(), group_id);
 #endif
 }
 #endif

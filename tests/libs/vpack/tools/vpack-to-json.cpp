@@ -169,9 +169,9 @@ int main(int argc, char* argv[]) {
     to_std_out = true;
   }
 #else
-  bool const toStdOut = false;
-  if (outfileName == nullptr) {
-    usage(argv);
+  bool const to_std_out = false;
+  if (outfile_name == nullptr) {
+    Usage(argv);
     return EXIT_FAILURE;
   }
 #endif

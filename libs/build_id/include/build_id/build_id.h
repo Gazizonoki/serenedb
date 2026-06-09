@@ -21,7 +21,7 @@
 
 /// At the moment build Ids are only supported under elf-linux if the build id
 /// is provided via a note in a ProgramHeader in the ELF information on the
-/// executable.
+/// executable. On other platforms GetBuildId() returns an empty string_view.
 ///
 /// On linux a little implicit linker script (BuildId.ld) is used to set two
 /// variables build_id_start[] and char build_id_end to the address of the

@@ -18,11 +18,13 @@ TOOL_NAME=$(basename "${TOOL}")
 
 case "${TOOL_NAME}" in
 bison*)
-	MAJOR_VER=$(${TOOL} --version | grep bison | sed -e "s;.* ;;" -e "s;\..*;;")
-	if test "${MAJOR_VER}" -ge "3"; then
-		TOOL_OPTS="--warnings=deprecated,other,error=conflicts-sr,error=conflicts-rr"
+	MAJOR_VER=$(${TOOL} --version 2>/dev/null | grep -i bison | head -1 | sed -e "s;.* ;;" -e "s;\..*;;")
+	if test -n "${MAJOR_VER}" && test "${MAJOR_VER}" -ge "3" 2>/dev/null; then
+		${TOOL} -d --warnings=deprecated,other,error=conflicts-sr,error=conflicts-rr \
+			-o "${OUTPUT}" "${INPUT}"
+	else
+		${TOOL} -d -o "${OUTPUT}" "${INPUT}"
 	fi
-	${TOOL} -d "${TOOL_OPTS}" -o "${OUTPUT}" "${INPUT}"
 	test -f "${PREFIX}.hpp" || exit 1
 	test -f "${PREFIX}.cpp" || exit 1
 	echo "/* clang-format off */" | cat - "${PREFIX}.hpp" >"${PREFIX}.tmp"

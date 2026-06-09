@@ -183,9 +183,12 @@ void Version::initialize() {
   gValues["platform"] = getPlatform();
   gValues["reactor-type"] = getBoostReactorType();
   gValues["server-version"] = getServerVersion();
-  gValues["sizeof int"] = basics::string_utils::Itoa(sizeof(int));
-  gValues["sizeof long"] = basics::string_utils::Itoa(sizeof(long));
-  gValues["sizeof void*"] = basics::string_utils::Itoa(sizeof(void*));
+  gValues["sizeof int"] =
+    basics::string_utils::Itoa(static_cast<uint64_t>(sizeof(int)));
+  gValues["sizeof long"] =
+    basics::string_utils::Itoa(static_cast<uint64_t>(sizeof(long)));
+  gValues["sizeof void*"] =
+    basics::string_utils::Itoa(static_cast<uint64_t>(sizeof(void*)));
   // always hard-coded to "false" since 3.12
   gValues["unaligned-access"] = "false";
 

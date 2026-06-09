@@ -92,7 +92,7 @@ size_t BufferedIndexInput::ReadBytes(byte_type* b, size_t count) {
   SDB_ASSERT(_begin <= _end);
 
   // read remaining data from buffer
-  const auto read = std::min(count, Remain());
+  const auto read = std::min(static_cast<uint64_t>(count), Remain());
   if (read) {
     std::memcpy(b, _begin, sizeof(byte_type) * read);
     _begin += read;
@@ -105,7 +105,7 @@ size_t BufferedIndexInput::ReadBytes(byte_type* b, size_t count) {
   auto size = count - read;
   b += read;
   if (size < _buf_size) {  // refill buffer & copy
-    size = std::min(size, Refill());
+    size = std::min(static_cast<uint64_t>(size), Refill());
     std::memcpy(b, _begin, sizeof(byte_type) * size);
     _begin += size;
   } else {  // read directly to output buffer if possible

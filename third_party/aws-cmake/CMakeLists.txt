@@ -84,8 +84,23 @@ list(APPEND AWS_C_CAL_SRC ${AWS_C_CAL_UNIX_SRC} ${AWS_C_CAL_SHARED_SRC})
 set(AWS_C_IO_DIR "${AWS_DIR}/aws-c-io")
 file(GLOB AWS_C_IO_SRC "${AWS_C_IO_DIR}/source/*.c")
 file(GLOB AWS_C_IO_POSIX_SRC "${AWS_C_IO_DIR}/source/posix/*.c")
-file(GLOB AWS_C_IO_LINUX_SRC "${AWS_C_IO_DIR}/source/linux/*.c")
-list(APPEND AWS_C_IO_SRC ${AWS_C_IO_POSIX_SRC} ${AWS_C_IO_LINUX_SRC})
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+    file(GLOB AWS_C_IO_LINUX_SRC "${AWS_C_IO_DIR}/source/linux/*.c")
+    list(APPEND AWS_C_IO_SRC ${AWS_C_IO_POSIX_SRC} ${AWS_C_IO_LINUX_SRC})
+elseif(APPLE)
+    file(GLOB AWS_C_IO_BSD_SRC "${AWS_C_IO_DIR}/source/bsd/*.c")
+    file(GLOB AWS_C_IO_DARWIN_SRC "${AWS_C_IO_DIR}/source/darwin/*.c")
+    list(APPEND AWS_C_IO_SRC ${AWS_C_IO_POSIX_SRC} ${AWS_C_IO_BSD_SRC} ${AWS_C_IO_DARWIN_SRC})
+elseif(
+    CMAKE_SYSTEM_NAME STREQUAL "FreeBSD"
+    OR CMAKE_SYSTEM_NAME STREQUAL "NetBSD"
+    OR CMAKE_SYSTEM_NAME STREQUAL "OpenBSD"
+)
+    file(GLOB AWS_C_IO_BSD_SRC "${AWS_C_IO_DIR}/source/bsd/*.c")
+    list(APPEND AWS_C_IO_SRC ${AWS_C_IO_POSIX_SRC} ${AWS_C_IO_BSD_SRC})
+else()
+    list(APPEND AWS_C_IO_SRC ${AWS_C_IO_POSIX_SRC})
+endif()
 
 # --- aws-c-compression ---
 set(AWS_C_COMPRESSION_DIR "${AWS_DIR}/aws-c-compression")
@@ -242,11 +257,22 @@ target_compile_definitions(_aws PUBLIC
     AWS_SDK_VERSION_MINOR=11
     AWS_SDK_VERSION_PATCH=0
     AWS_DEEP_CHECKS=0
-    AWS_ENABLE_EPOLL
     INTEL_NO_ITTNOTIFY_API
     AWS_MQTT_WITH_ACCOUNT_ENDPOINTS
     AWS_CHECKSUMS_USE_HW_CRC32=0
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_compile_definitions(_aws PUBLIC AWS_ENABLE_EPOLL)
+elseif(APPLE)
+    target_compile_definitions(_aws PUBLIC AWS_ENABLE_KQUEUE)
+elseif(
+    CMAKE_SYSTEM_NAME STREQUAL "FreeBSD"
+    OR CMAKE_SYSTEM_NAME STREQUAL "NetBSD"
+    OR CMAKE_SYSTEM_NAME STREQUAL "OpenBSD"
+)
+    target_compile_definitions(_aws PUBLIC AWS_ENABLE_KQUEUE)
+endif()
 
 # Compiler flags
 target_compile_options(_aws PRIVATE
@@ -298,6 +324,16 @@ target_link_libraries(_aws PUBLIC
     OpenSSL::Crypto
     OpenSSL::SSL
 )
+
+if(APPLE)
+    target_link_libraries(
+        _aws
+        PUBLIC
+        "-framework CoreFoundation"
+        "-framework Security"
+        "-framework Network"
+    )
+endif()
 
 aws_set_thread_affinity_method(_aws)
 aws_set_thread_name_method(_aws)

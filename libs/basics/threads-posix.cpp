@@ -184,7 +184,13 @@ ErrorCode SdbJoinThreadWithTimeout(pthread_t* thread, uint32_t timeout) {
   ts.tv_sec += timeout / 1000;
   ts.tv_nsec = (timeout % 1000) * 1'000'000;
 
+#if defined(__GLIBC__)
   int res = pthread_timedjoin_np(*thread, nullptr, &ts);
+#else
+  // pthread_timedjoin_np is GNU/glibc-only; fall back to a blocking join.
+  (void)ts;
+  int res = pthread_join(*thread, nullptr);
+#endif
   if (res != 0) {
     SDB_WARN("xxxxx", sdb::Logger::THREADS,
              "cannot join thread: ", strerror(res));

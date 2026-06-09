@@ -70,13 +70,13 @@ std::string dlerror() {
 namespace {
 
 #if defined(_MSC_VER)  // Microsoft compiler
-const std::wstring FILENAME_EXTENSION(L".dll");
+const std::wstring kFilenameExtension(L".dll");
 #elif defined(__APPLE__)  // MacOS
-const std::string FILENAME_EXTENSION(".dylib");
+const std::string kFilenameExtension(".dylib");
 #elif defined(__GNUC__)   // GNU compiler
 const std::string kFilenameExtension(".so");
 #else
-const std::string FILENAME_EXTENSION("");
+const std::string kFilenameExtension("");
 #endif
 
 }  // namespace
